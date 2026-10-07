@@ -1,0 +1,16 @@
+# Part A:
+# s3 = a, s4 = b, s5 = y
+# y = -10 || 0xF6
+addi s3, zero,   5
+addi s4, zero, -15
+add  s5, s3, s4
+
+# Part B:
+# S3 = a, s4 = b, s5 = y
+addi s3, zero,  66
+addi s4, zero, -99
+
+
+and  s5, s3, s4 
+ori  s5, zero, 55
+slli s5, zero,  8
