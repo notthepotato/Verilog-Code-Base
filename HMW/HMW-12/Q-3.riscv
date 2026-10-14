@@ -1,0 +1,25 @@
+# int g = a0, h = a1
+# i = s1
+#  all nums are 32 bit signed ints 
+# use temps (t0 - t6)
+
+# A) 
+bne a0, a1, L1 # if a0 != a1 then L1
+    addi a0, a0, 1 # a0 = a0 + 
+L1: addi a1, a1, -1 # a1 = a1 + -1
+
+
+# B) 
+
+beq a0, a1, L2 # if a0 == a1 then L2
+    addi a0, zero, 0 # a0 = zero + 0
+L2: addi a1, zero, 0 # a1 = zero + 0
+
+# C)
+
+addi a0, zero, 0 #a0 = zero + 0
+
+back: beq a0, 100, skip # if a0 == 100 then skip
+    addi a0, a0, 1 # a0 = a0 + 1
+    j back  # jump to back
+    

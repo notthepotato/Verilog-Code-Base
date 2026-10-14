@@ -1,0 +1,31 @@
+# s3 = a, s4 = b, s5 = y
+
+lui t1, 0xABCDE 
+addi t1, t1, 0x123 # t1 = t1 + 0x123
+
+addi s3, zero, t1; # S3 = zero + t1
+
+addi s4, s3, -15 # s3 = s3 + -15
+add s5, zero, 0 # s5 = zero + 0
+
+add s5, s3, s4 # s5 = s3 + s4
+
+
+# s3 = a, s4 = b, s5 = y
+lui t0, 0xABCDE
+addi t0, t0, 0xF33 # t0 = t0 + F33
+
+addi s3, zero, t0 # s3 = zero + t0
+
+lui t1, 0xFFFFA
+addi t1, t1, 0x987 # t1 = t1 + 0x987
+
+addi s4, zero, t1 # s4 = t1 + t1
+
+addi s5, zero, 0 # s5 = zero + 0
+
+add s5, s3, s4 # s5 = s3 + s4
+
+mul t2, s3, 2
+
+addi s5, s5, t2 # s5 = s5 + t2
