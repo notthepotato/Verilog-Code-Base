@@ -1,0 +1,192 @@
+# A)
+
+# a0 = g, a1 = h, s1 = i
+
+# int g, h, i;
+# g = 5;
+# h = 3;
+# for (i = 10; i != -1; i--)
+# g = g + h;
+
+addi a0, zero, 5 # a0 = zero + 5
+addi a1, zero, 3 # a1 = zero + 3
+addi s1, zero, 10 # s1 = zero + 10
+
+beq s1, -1, L1 # if s1 == -1 then L1
+
+    addi s1, s1, -1 # s1 = s1 + -1
+    addi a0, a0, a1 # a0 = a0 + a1
+L1: # ... g(a1) = 8
+
+
+# B)
+# a0 = g, a1 = h, s1 = i
+
+# int i;
+# int vals[10]; // An int is a 32-bit (i.e., 4-byte) signed number
+#               // assume the base address of the vals array is at
+#               // 0x230. The base address of an array is the memory
+#               // address of element 0 of the array (i.e., vals[0]).
+#               // So, vals[1] is at 0x234, vals[2] at 0x238, and so on.
+#               // Put the base address (0x230)in register s5.
+# for (i = 0; i != 10; i++)
+# vals[i] = i;
+
+        addi s5, zero, 0x230    # s5 = 0x230 (base address of vals)
+        addi s1, zero, 0        # i = 0
+        addi t0, zero, 10       # t0 = 10 (loop limit)
+
+loop:
+        beq  s1, t0, done       # if (i == 10) exit the loop
+        slli t1, s1, 2          # t1 = i * 4 (byte offset, since each int is 4 bytes)
+        add  t1, s5, t1         # t1 = address of vals[i]
+        sw   s1, 0(t1)          # vals[i] = i
+        addi s1, s1, 1          # i++
+        j    loop               # go back and check the condition again
+
+done:
+
+# C)
+
+# a0 = g, a1 = h, s1 = i
+
+# int i; // i is in s3
+# int result = 1; // result is in s4
+# for (i = 1; i < 12; i++)
+# result = result * i;
+# Also: state the value of result at the end of this code snippet.
+
+addi s1, zero, 1 # s1 = zero + 1
+addi s4, zero, 1 # s4 = zero + 1
+loop: 
+    blt s1, 12, done # if s1 < 12 then done
+    
+    addi s1, s1, 1 # s1 = s1 + 1
+    mul  t0, s4, s1
+    addi s4, s4, t0 # s4 = s4 + t0
+    j loop  # jump to loop
+    
+done: # ... result(s4) = 479001600
+
+
+
+# D) 
+
+# a0 = g, a1 = h, s1 = i
+
+# int i; // i is in s3
+# int result = 1; // result is in s4
+# for (i = 20; i >= 1; i--)
+# result = result + i;
+# Also: state the value of result at the end of this code snippet.
+
+addi s1, zero, 1 # s1 = zero + 1
+addi s4, zero, 1 # s4 = zero + 1
+loop: 
+    bge s3, 20, done # if s3 >= 20 then done   
+    addi s1, s1, -1 # s1 = s1 + -1
+    addi s4, s4, 1 # s4 = s4 + 1
+    j loop  # jump to loop
+    
+done: # ... result(s4) = 2.4329020082\times10^{18}
+
+
+# E) 
+
+# a0 = g, a1 = h, s1 = i
+
+# int i; // i is in s3
+# int result = 1; // result is in s4
+# for (i = 20; i > 0; i--)
+# result = result + i;
+# Also: state the value of result at the end of this code snippet.
+
+addi s1, zero, 20 # s1 = zero + 20
+addi s4, zero, 1 # s4 = zero + 1
+loop: 
+    bgt s3, 0, done # if s3 > 0 then done
+    addi s1, s1, -1 # s1 = s1 + -1
+    addi s4, s4, 1 # s4 = s4 + 1
+    j loop  # jump to loop
+    
+done: # ... result(s4) = 2.4329020082\times10^{18}
+
+# F)
+
+# a0 = g, a1 = h, s1 = i
+
+# int i; // i is in s3
+# int vals[5]; // base address of vals is in t0 = 0x11223344
+# for (i = 0; i < 5; i++)
+# vals[i] = 7+i;
+
+lui  t0, 0x11223        # t0 = 0x11223000 (upper 20 bits)
+addi t0, t0, 0x344      # t0 = 0x11223344 (add lower 12 bits)
+addi s3, zero, 0        # i = 0
+addi t1, zero, 5        # t1 = 5 (loop limit)
+
+loop:
+        bge  s3, t1, done       # if (i >= 5) exit the loop
+        slli t2, s3, 2          # t2 = i * 4 (byte offset)
+        add  t2, t0, t2         # t2 = address of vals[i]
+        addi t3, s3, 7          # t3 = 7 + i
+        sw   t3, 0(t2)          # vals[i] = 7 + i
+        addi s3, s3, 1          # i++
+        j    loop
+
+done:
+
+# G)
+
+# // text1 is at 0x200 (put the base address in t1)
+# // text2 is at 0x220 (put the base address in t2)
+# // Use the following registers for the other variables:
+# // s1 = len1
+# // s2 = len2
+# // s3 = longer
+# int longer;
+# char text1[50] = “fall”;
+# char text2[50] = “winter”;
+# int len1, len2;
+# len1 = 0;
+# len2 = 0;
+# while (text1[len1])
+# len1++;
+# while (text2[len2])
+# len2++;
+# if (len1 > len2)
+# longer = 1;
+# else
+# longer = 0;
+
+# t1 = base of text1, t2 = base of text2
+# s1 = len1, s2 = len2, s3 = longer
+
+        addi t1, zero, 0x200    # t1 = 0x200 (base address of text1)
+        addi t2, zero, 0x220    # t2 = 0x220 (base address of text2)
+        addi s1, zero, 0        # len1 = 0
+        addi s2, zero, 0        # len2 = 0
+
+while1:
+        add  t3, t1, s1         # t3 = address of text1[len1]
+        lbu  t4, 0(t3)          # t4 = text1[len1] (load one byte)
+        beq  t4, zero, while2   # if text1[len1] == '\0', stop
+        addi s1, s1, 1          # len1++
+        j    while1
+
+while2:
+        add  t3, t2, s2         # t3 = address of text2[len2]
+        lbu  t4, 0(t3)          # t4 = text2[len2]
+        beq  t4, zero, compare  # if text2[len2] == '\0', stop
+        addi s2, s2, 1          # len2++
+        j    while2
+
+compare:
+        bge  s2, s1, else_part  # if len2 >= len1 (so NOT len1 > len2), go to else
+        addi s3, zero, 1        # longer = 1
+        j    done
+
+else_part:
+        addi s3, zero, 0        # longer = 0
+
+done:
