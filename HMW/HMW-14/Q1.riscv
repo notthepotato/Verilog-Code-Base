@@ -1,0 +1,131 @@
+# Question 0
+# Took me 3 hrs
+
+# 1)
+# Part A)
+
+addi a0, x0, 7
+addi a1, x0, 3
+jal subtract # subtract(7, 3)
+addi s5, a0, 0 # store returned value in s5
+
+subtract:
+    sub s7, a0, a1
+    addi a0, s7, 0 # copy result into a0
+    jalr x0, 0(ra)
+
+# Part B)
+
+addi a0, x0, 7
+addi a1, x0, 3
+jal subtract
+addi s5, a0, 0 # store returned value in s5
+
+addi a0, x0, 8
+addi a1, x0, 20
+jal subtract
+addi s6, a0, 0 # store returned value in s6
+
+subtract:
+    sub s7, a0, a1
+    addi a0, s7, 0
+    jalr x0, 0(ra)
+
+# Question 2
+
+addi a0, x0, 7
+addi a1, x0, 3
+jal subtract
+addi s5, a0, 0
+
+addi a0, x0, 8
+addi a1, x0, 20
+jal subtract
+addi s6, a0, 0
+
+subtract:
+    addi sp, sp, -8 # make room on stack for ra and s7
+    sw ra, 4(sp)
+    sw s7, 0(sp)
+
+    sub s7, a0, a1
+    addi a0, s7, 0
+
+    lw s7, 0(sp)
+    lw ra, 4(sp)
+    addi sp, sp, 8 # pop stack frame, memory management?
+    jalr x0, 0(ra)
+
+# Question 3
+# Part A)
+# The fuction returns 17
+
+# Part B 1)
+func1:
+    addi s2, x0, 7
+
+    blt s2, a0, L1 # if val < a jump to L1
+    jal x0, L2
+
+L1:
+    addi t0, a1, 0
+    addi t1, a0, 0
+    addi a0, t0, 0
+    addi a1, t1, 0
+    jal func2 # call func2(a0, a1)
+    add s2, s2, a0
+
+L2:
+    sub s2, s2, a1
+    addi a0, s2, 0 # return a0
+    jalr x0, 0(ra)
+
+func2:
+    or s2, a0, a1
+    addi a0, s2, 0
+    jalr x0, 0(ra)
+
+# Part B 2)
+
+func2:
+    addi sp, sp, -8 # Expand the stack
+    sw ra, 4(sp)
+    sw s2, 0(sp)
+
+    or s2, a0, a1 # x | w
+    addi a0, s2, 0
+
+    lw s2, 0(sp)
+    lw ra, 4(sp)
+    addi sp, sp, 8 # Shrink the stack
+    jalr x0, 0(ra)
+
+func1:
+    addi sp, sp, -12 # Expand the stack
+    sw ra, 8(sp)
+    sw s2, 4(sp)
+    sw a1, 0(sp)
+
+    addi s2, x0, 7
+
+    blt s2, a0, L1 # val < a jump to L1
+    jal x0, L2
+
+L1:
+    lw t0, 0(sp) # load saved b
+    addi t1, a0, 0
+    addi a0, t0, 0
+    addi a1, t1, 0
+    jal func2
+    add s2, s2, a0 # val = val + func2
+
+L2:
+    lw t0, 0(sp)
+    sub s2, s2, t0
+    addi a0, s2, 0
+
+    lw a1, 0(sp)
+    lw s2, 4(sp)
+    lw ra, 8(sp)
+    addi sp, sp, 12 # Shrink the stack
+    jalr x0, 0(ra)
