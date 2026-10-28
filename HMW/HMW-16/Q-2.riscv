@@ -1,0 +1,31 @@
+# A)
+jal ra, L1  # jump to ra, L1 and save position to ra
+
+# B) 
+jal zero, Loop  # jump to zero, Loop and save position to ra
+
+# C)
+jalr zero, ra, 0
+
+# D) 
+li s1, -45 # s1 = -45
+
+# E)
+lui s3, 0xABSDR
+addi s3, s3, 0x123 # s3 = s3 + 0x123
+
+# F)
+lui s5, 0xFEDCC
+addi s5, s5, -1384 # s5 = s5 + -1384
+
+# G) 
+bge zero, t1, L3 # if zero >= t1 then L3
+
+# H) 
+ble t3, s0, Label5 # if t3 <= s0 then Label5
+
+# I)
+xori s5, s2, -1
+
+# J)
+sub s3, zero, t1 # s3 = zero - t1

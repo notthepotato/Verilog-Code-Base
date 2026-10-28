@@ -1,0 +1,30 @@
+# A)
+
+#recursive call until a > b
+#  A  |  B
+#  7  | 11
+#  8  | 10
+#  9  | 09
+# 10  | 08
+
+# 10 + 5 = 15
+# y = 15
+
+# B) 
+
+func1:
+    addi s1, zero, 5 # a0 = zero + 5
+
+    bgt a0, a1, else # if a0 > a1 then else
+        add s1, s1, a0 # a0 = s1 + a0
+        j endif
+    else: 
+        addi a0, a0, 1 # a0 = a0 + 1
+        addi a1, a2, -1 # a1 = a2 + -1
+        jal ra, func1  # jump to ra, func1 and save position to ra
+        addi s1, s1, a0 # s1 = s1 + a0
+    endif:
+        add t0, zero, s1 # t0 = zero + s1
+        jr ra   # jump to ra
+        
+        
