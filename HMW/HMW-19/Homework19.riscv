@@ -1,0 +1,59 @@
+-- Question 0: 3
+
+-- Question 1 
+
+module bcdcounter(input logic clk, input logic reset,
+				  output logic [3:0] cnt);
+
+    always_ff @(posedge clk) begin
+        if (reset) begin -- Must abide reset
+            cnt <= 4'd0;
+        end else if (cnt == 4'd9) begin -- Rolls over to 0 after d9
+            cnt <= 4'd0;
+        end else begin -- Count up
+            cnt <= cnt + 4'd1;
+        end
+    end
+endmodule
+
+-- Question 2
+-- fout = (43 * 50000000)/(2^31) = 1.00 Hz
+
+module clk1Hz(input logic clk, input logic reset,
+			  output logic clk1Hzout);
+
+    logic [30:0] cnt; -- 31 bits got closest to 1.000
+
+    always_ff @(posedge clk) begin
+        if (reset) begin -- start at 0
+            cnt <= 31'd0;
+        end else begin
+            cnt <= cnt + 31'd43; -- roll back over
+        end
+    end
+
+    assign clk1Hzout = cnt[30]; == -- only output at 30
+
+endmodule
+
+-- Question 3
+
+systemverilog
+module cnt0_9(input logic clk, input logic reset,
+			  output logic [3:0] cnt);
+
+    logic clk1Hz_wire; -- set up to port clock to the counter
+
+    clk1Hz clock_gen ( -- parameters for the clock freq module
+        .clk       (clk),
+        .reset     (reset),
+        .clk1Hzout (clk1Hz_wire)
+    );
+
+    bcdcounter counter_inst ( --  input logic into counter module
+        .clk   (clk1Hz_wire),
+        .reset (reset),
+        .cnt   (cnt) -- should automatically update the output.
+    );
+
+endmodule
